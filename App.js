@@ -26,26 +26,35 @@ app.use((req, res, next) => {
 
 app.get('/', (req, res, next) => {
     res.send('<h1>Welcome To ChessMate API</h1>');
-})
+});
 
 app.get('/signup', (req, res, next) => {
     res.send('<h1>Please use POST endpoint.</h1>')
-})
+});
 
 app.post('/signup', (req, res, next) => {
     console.log(req.body);
+
     const username = req.body.username;
     const password = req.body.password;
-    const fName = req.body.fName;
-    const lName = req.body.lName;
     const displayPicture = req.body.displayPicture;
 
     const newUser = new User({
         username,
         password,
-        fName,
-        lName,
-        displayPicture
+        displayPicture,
+        rank: 0,
+        score: 0,
+        singleplayer: {
+            wins: 0,
+            loss: 0,
+            draws: 0
+        },
+        multiplayer: {
+            wins: 0,
+            loss: 0,
+            draws: 0
+        },
     });
 
     newUser.save()
@@ -53,15 +62,21 @@ app.post('/signup', (req, res, next) => {
         .catch(err => {
             res.send({ message: 'Signup failed. Some error occured. Please try again later.' });
         })
-})
+});
+
+app.get('/login', (req, res, next) => {
+    res.send('<h1>Please use POST endpoint.</h1>')
+});
 
 app.post('/login', (req, res, next) => {
-    const email = req.body.email;
+    const username = req.body.username;
     const password = req.body.password;
+
     let message = '';
-    User.findOne({ email }, (err, theUser) => {
+
+    User.findOne({ username }, (err, theUser) => {
         if (err) {
-            message = 'Some error occured BACKEND';
+            message = 'Some BACKEND error occured.';
         }
         else {
             if (theUser) {
